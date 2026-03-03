@@ -1,12 +1,12 @@
-# 📄 DocuMind — AI-Powered Document Intelligence System
+#  SideQuest — AI-Powered Document Intelligence System
 
 > Upload any document. Ask anything. Get answers with proof.
 
-DocuMind is a full-stack AI application that allows users to upload large documents — legal contracts, books, research papers, manuals — and have an intelligent conversation with them. Every response is grounded strictly in the uploaded document and comes with precise citations pointing back to the exact page and section the answer was derived from.
+SideQuest is a full-stack AI application that allows users to upload large documents — legal contracts, books, research papers, manuals — and have an intelligent conversation with them. Every response is grounded strictly in the uploaded document and comes with precise citations pointing back to the exact page and section the answer was derived from.
 
 ---
 
-## 📌 Table of Contents
+##  Table of Contents
 
 - [What This Project Does](#what-this-project-does)
 - [The Core Problem It Solves](#the-core-problem-it-solves)
@@ -31,7 +31,7 @@ DocuMind is a full-stack AI application that allows users to upload large docume
 
 ## What This Project Does
 
-DocuMind lets users:
+SideQuest lets users:
 
 1. **Upload** a large document (PDF, DOCX, TXT) of any size — a 500-page legal contract, a full textbook, a government report.
 2. **Ask questions** in plain English about the content of that document.
@@ -331,7 +331,7 @@ in which case immediate termination without notice is permitted.
 ## Project Structure
 
 ```
-documind/
+SideQuest/
 │
 ├── backend/
 │   ├── main.py                    # FastAPI app entry point
@@ -589,13 +589,13 @@ OPENAI_LLM_MODEL=gpt-4o
 VECTOR_DB_PROVIDER=chroma           # "chroma" for local, "pinecone" for production
 PINECONE_API_KEY=pcsk-...
 PINECONE_ENVIRONMENT=us-east-1
-PINECONE_INDEX_NAME=documind
+PINECONE_INDEX_NAME=SideQuest
 
 # File Storage
 FILE_STORAGE_PROVIDER=local         # "local" or "s3"
 AWS_ACCESS_KEY_ID=...
 AWS_SECRET_ACCESS_KEY=...
-AWS_S3_BUCKET=documind-uploads
+AWS_S3_BUCKET=SideQuest-uploads
 
 # App Config
 MAX_FILE_SIZE_MB=50
@@ -616,8 +616,8 @@ MIN_SIMILARITY_THRESHOLD=0.70
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/yourusername/documind.git
-cd documind
+git clone https://github.com/yourusername/SideQuest.git
+cd SideQuest
 ```
 
 ### 2. Backend Setup
