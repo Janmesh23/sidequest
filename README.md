@@ -287,6 +287,14 @@ in which case immediate termination without notice is permitted.
 
 ---
 
+## Quick Links
+
+For detailed project information, please refer to the following documents:
+
+- [Setup Guide (SETUP.md)](./SETUP.md): Instructions on how to configure and run the project locally.
+- [Project Documentation (DOCUMENTATION.md)](./DOCUMENTATION.md): A complete breakdown of the project architecture and file descriptions.
+
+---
 
 ## Key Technical Concepts Explained
 
