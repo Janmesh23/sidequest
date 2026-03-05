@@ -587,7 +587,5 @@ Built on top of:
 - [LangChain](https://python.langchain.com) — RAG orchestration
 - [LlamaIndex](https://www.llamaindex.ai) — Document intelligence
 - [ChromaDB](https://www.trychroma.com) — Local vector store
-- [Pinecone](https://www.pinecone.io) — Production vector database
-- [OpenAI](https://openai.com) — Embeddings and language model
 
 ---
