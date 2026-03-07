@@ -15,6 +15,7 @@ services:
       - key: FRONTEND_URL
         sync: false
     disk:
+      # Use 1 worker to prevent SQLite/ChromaDB "database is locked" errors on startup
       name: sidequest-data
       mountPath: /data
       sizeGB: 1

@@ -28,5 +28,5 @@ RUN mkdir -p /data/chroma_db
 # Expose the port
 EXPOSE 8000
 
-# Start command
-CMD ["gunicorn", "main:app", "--workers", "2", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+# Start command (using 1 worker to ensure thread-safety with SQLite/ChromaDB)
+CMD ["gunicorn", "main:app", "--workers", "1", "--worker-class", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
