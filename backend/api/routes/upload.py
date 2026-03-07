@@ -28,20 +28,22 @@ def process_document_background(doc_id: str, file_path: str, filename: str, user
             chunk["metadata"]["user_id"] = user_id
             chunk["metadata"]["document_id"] = doc_id
         
-        status_manager.set_status(doc_id, f"embedding (0/{len(chunks)})", user_id=user_id)
+        status_manager.set_status(doc_id, f"embedding ({len(chunks)} chunks)...", user_id=user_id)
         # 3. Generate embeddings
         chunk_texts = [c["text"] for c in chunks]
         embeddings = embedder.embed_documents(chunk_texts)
         
-        status_manager.set_status(doc_id, "indexing", user_id=user_id)
+        status_manager.set_status(doc_id, "storing in database...", user_id=user_id)
         # 4. Store in Vector DB
         vector_store.add_chunks(chunks, embeddings)
         
         status_manager.set_status(doc_id, "ready", {"total_chunks": len(chunks)}, user_id=user_id)
         print(f"Background task complete for {filename}")
     except Exception as e:
-        print(f"Error in background processing: {e}")
-        status_manager.set_status(doc_id, f"failed: {str(e)}")
+        import traceback
+        error_msg = f"failed: {str(e)}"
+        print(f"Error in background processing: {traceback.format_exc()}")
+        status_manager.set_status(doc_id, error_msg, user_id=user_id)
     finally:
         # Cleanup temp file
         if os.path.exists(file_path):
