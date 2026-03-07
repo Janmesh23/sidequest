@@ -16,10 +16,13 @@ app = FastAPI(
 )
 
 # Configure CORS
-frontend_url = os.getenv("FRONTEND_URL", "*")
+frontend_url = os.getenv("FRONTEND_URL", "*").rstrip("/")
+origins = [frontend_url] if frontend_url != "*" else ["*"]
+
+# Add Vercel branch previews support if needed, but for now focus on the main one
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[frontend_url] if frontend_url != "*" else ["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
