@@ -8,10 +8,12 @@ services:
     envVars:
       - key: DATABASE_URL
         value: sqlite:////data/sidequest.db
+      - key: CHROMA_SERVER_NOFILE
+        value: "65535"
       - key: CHROMA_PERSIST_PATH
         value: /data/chroma_db
       - key: PYTHON_VERSION
-        value: 3.11.0
+        value: 3.11.9
       - key: GEMINI_API_KEY
         sync: false
       - key: FRONTEND_URL
