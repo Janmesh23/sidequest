@@ -4,6 +4,10 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 
+# Fix for ChromaDB "unable to infer type for attribute chroma_server_nofile"
+# This must be set before any ChromaDB imports occur.
+os.environ["CHROMA_SERVER_NOFILE"] = "65535"
+
 # Load environment variables (Override system env with .env)
 load_dotenv(override=True)
 
