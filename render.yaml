@@ -1,11 +1,8 @@
 services:
   - type: web
     name: sidequest-backend
-    env: python
+    env: docker
     rootDir: backend
-    pythonVersion: 3.11.9
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
     envVars:
       - key: DATABASE_URL
         value: sqlite:////data/sidequest.db
@@ -13,8 +10,6 @@ services:
         value: "65535"
       - key: CHROMA_PERSIST_PATH
         value: /data/chroma_db
-      - key: PYTHON_VERSION
-        value: 3.11.9
       - key: GEMINI_API_KEY
         sync: false
       - key: FRONTEND_URL
