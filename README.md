@@ -18,8 +18,6 @@ SideQuest is a full-stack AI application that allows users to upload large docum
   - [Stage 3 — Vector Storage](#stage-3--vector-storage)
   - [Stage 4 — Query Processing](#stage-4--query-processing)
   - [Stage 5 — Answer Generation with Citations](#stage-5--answer-generation-with-citations)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
 - [Key Technical Concepts Explained](#key-technical-concepts-explained)
 - [The Citations System](#the-citations-system)
 - [API Reference](#api-reference)
