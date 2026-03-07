@@ -13,3 +13,5 @@ python-dotenv
 langchain-google-genai
 google-generativeai
 langchain-text-splitters
+gunicorn
+uvicorn[standard]

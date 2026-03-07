@@ -49,3 +49,9 @@ The frontend is a Next.js application designed with a premium, glassmorphic UI.
 ### Styling
 - **src/app/globals.css**: Global CSS variables and glassmorphism definitions.
 - **src/components/**/*.module.css**: Scoped styles for individual components.
+
+## Cloud Deployment
+The project is configured for a professional cloud environment:
+- **render.yaml**: Defines the backend infrastructure (FastAPI on Render.com).
+- **Persistent Storage**: Uses Render Disks to persist the SQLite database and ChromaDB vectors.
+- **Environment Driven**: All URLs and secrets are managed via environment variables on Render and Vercel.
