@@ -54,60 +54,41 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
             <aside className={styles.sidebar}>
                 <div className={styles.logo}>
                     <div className={styles.logoIcon}>
-                        <Zap size={20} fill="white" />
+                        <Zap size={18} />
                     </div>
-                    <span className="font-display">SideQuest</span>
                 </div>
 
                 <nav className={styles.navSection}>
                     <div
                         className={`${styles.navItem} ${activeTab === 'chat' ? styles.navItemActive : ''}`}
                         onClick={() => onTabChange('chat')}
+                        title="Chat"
                     >
-                        <MessageSquare size={18} />
-                        <span>Chat</span>
+                        <MessageSquare size={20} />
                     </div>
                     <div
                         className={`${styles.navItem} ${activeTab === 'library' ? styles.navItemActive : ''}`}
                         onClick={() => onTabChange('library')}
+                        title="Library"
                     >
-                        <Library size={18} />
-                        <span>Library</span>
+                        <Library size={20} />
                     </div>
                 </nav>
 
                 <div className={styles.docList}>
-                    <h3 className={styles.docSectionTitle}>Recent Documents</h3>
-                    {documents.map((doc) => (
+                    {documents.slice(0, 5).map((doc) => (
                         <div key={doc.id} className={styles.docItem} title={doc.filename}>
-                            <div className={`${styles.statusDot} ${doc.status === 'ready' ? styles.statusReady :
-                                doc.status.includes('failed') ? styles.statusFailed :
-                                    styles.statusProcessing
-                                }`} />
-                            <FileText size={14} />
-                            <span>{doc.filename}</span>
+                            <FileText size={18} />
                         </div>
                     ))}
-                    {documents.length === 0 && (
-                        <div className={styles.docItem} style={{ fontStyle: 'italic', cursor: 'default' }}>
-                            {status === 'loading' ? "Loading..." : "No documents yet"}
-                        </div>
-                    )}
                 </div>
 
                 <div className={styles.navSection} style={{ marginTop: 'auto' }}>
-                    <div className={styles.navItem} style={{ borderTop: '1px solid var(--border-primary)', paddingTop: '16px', borderRadius: 0, cursor: 'default' }}>
-                        <div className={styles.logoIcon} style={{ width: '32px', height: '32px' }}>
-                            <User size={16} />
-                        </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', marginLeft: '8px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 600 }}>{session?.user?.name || (status === 'authenticated' ? "Authenticated" : "Guest")}</span>
-                            <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{session?.user?.email || (status === 'loading' ? "Loading session..." : "Not signed in")}</span>
-                        </div>
+                    <div className={styles.navItem} title={session?.user?.name || "User"}>
+                        <User size={20} />
                     </div>
-                    <div className={styles.navItem} onClick={handleLogout}>
-                        <Settings size={18} />
-                        <span>Logout</span>
+                    <div className={styles.navItem} onClick={handleLogout} title="Logout">
+                        <Settings size={20} />
                     </div>
                 </div>
             </aside>
@@ -119,20 +100,21 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
                         {/* Search placeholder */}
                     </div>
                     <div style={{ display: 'flex', gap: '16px' }}>
-                        <button className="glass" style={{
-                            padding: '10px 20px',
-                            borderRadius: '10px',
-                            fontSize: '14px',
-                            fontWeight: 600,
-                            color: 'white',
+                        <button style={{
+                            padding: '8px 16px',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            backgroundColor: 'var(--bg-tertiary)',
+                            color: 'var(--text-primary)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '8px',
                             border: '1px solid var(--border-primary)'
                         }} onClick={() => onTabChange('library')}>
-                            <CloudUpload size={16} />
-                            Upload
+                            <CloudUpload size={14} />
+                            Add Context
                         </button>
                     </div>
                 </header>

@@ -40,14 +40,14 @@ export default function LoginPage() {
 
     return (
         <div className={styles.container}>
-            <div className={`${styles.loginCard} glass-card animate-fade-in`}>
+            <div className={`${styles.loginCard} animate-fade-in`}>
                 <div className={styles.logo}>
                     <div className={styles.logoIcon}>
-                        <Zap size={32} fill="white" />
+                        <Zap size={32} />
                     </div>
                     <div>
                         <h1 className={styles.title}>SideQuest</h1>
-                        <p className={styles.subtitle}>Unlock your documents' secrets</p>
+                        <p className={styles.subtitle}>Intelligence for your document context.</p>
                     </div>
                 </div>
 

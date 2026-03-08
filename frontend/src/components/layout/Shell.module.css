@@ -7,13 +7,15 @@
 }
 
 .sidebar {
-    width: 280px;
+    width: 72px;
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 24px;
+    align-items: center;
+    padding: 20px 0;
     border-right: 1px solid var(--border-primary);
-    background-color: var(--bg-secondary);
+    background-color: var(--bg-primary);
+    /* Claude uses same bg for sidebar area usually or slightly off */
 }
 
 .main {
@@ -22,25 +24,23 @@
     flex-direction: column;
     height: 100%;
     overflow: hidden;
-    position: relative;
+    background-color: var(--bg-primary);
 }
 
 .header {
-    height: 72px;
+    height: 64px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0 32px;
-    border-bottom: 1px solid var(--border-primary);
-    background-color: var(--glass-bg);
-    backdrop-filter: var(--glass-blur);
+    justify-content: flex-end;
+    padding: 0 24px;
+    background-color: transparent;
     z-index: 10;
 }
 
 .content {
     flex: 1;
     overflow-y: auto;
-    padding: 32px;
+    padding: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,11 +49,9 @@
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 48px;
-    color: var(--text-primary);
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 32px;
 }
 
 .logoIcon {
@@ -70,19 +68,27 @@
 .navSection {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 16px;
+    width: 100%;
+    align-items: center;
 }
 
 .navItem {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px 16px;
-    border-radius: 12px;
-    color: var(--text-secondary);
-    transition: var(--transition-base);
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    transition: var(--transition-fast);
     cursor: pointer;
-    font-weight: 500;
+    position: relative;
+}
+
+.navItem span {
+    display: none;
+    /* Hide labels in ultra-thin sidebar */
 }
 
 .navItem:hover {
@@ -92,42 +98,42 @@
 
 .navItemActive {
     background-color: var(--bg-tertiary);
-    color: var(--accent-secondary);
+    color: var(--text-primary);
     border: 1px solid var(--border-primary);
 }
 
 .docList {
     margin-top: 32px;
-    flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
 }
 
 .docSectionTitle {
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--text-muted);
-    margin-bottom: 16px;
-    padding-left: 16px;
+    display: none;
+    /* Hide title in thin sidebar */
 }
 
 .docItem {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    color: var(--text-secondary);
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition-fast);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+}
+
+.docItem span {
+    display: none;
+    /* Hide filenames */
 }
 
 .docItem:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: var(--bg-tertiary);
     color: var(--text-primary);
 }
 

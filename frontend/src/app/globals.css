@@ -1,35 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap');
 
 :root {
-  /* Colors - Sleek Dark Theme */
-  --bg-primary: #05070a;
-  --bg-secondary: #0c111d;
-  --bg-tertiary: #161b26;
+  /* Colors - Claude Minimalist (Light Mode Default) */
+  --bg-primary: #fbfaf8;
+  --bg-secondary: #f3f2ef;
+  --bg-tertiary: #ebe9e4;
 
-  --accent-primary: #3b82f6;
-  --accent-secondary: #60a5fa;
-  --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --accent-primary: #1d1d1f;
+  --accent-secondary: #424245;
 
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #1d1d1f;
+  --text-secondary: #424245;
+  --text-muted: #6e6e73;
 
-  --border-primary: rgba(255, 255, 255, 0.08);
-  --border-secondary: rgba(2 control-5, 2x5, 255, 0.15);
+  --border-primary: rgba(0, 0, 0, 0.08);
+  --border-secondary: rgba(0, 0, 0, 0.15);
 
-  --glass-bg: rgba(12, 17, 29, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: blur(12px);
+  --glass-bg: rgba(251, 250, 248, 0.8);
+  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-blur: blur(8px);
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-accent: 0 0 20px rgba(59, 130, 246, 0.3);
+  /* Claude Dark Mode (Media Query or Data-theme) */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
 
   /* Transitions */
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #242424;
+  --bg-tertiary: #2d2d2d;
+
+  --text-primary: #e8e8e6;
+  --text-secondary: #b4b4b4;
+  --text-muted: #868686;
+
+  --border-primary: rgba(255, 255, 255, 0.08);
+  --border-secondary: rgba(255, 255, 255, 0.15);
+
+  --glass-bg: rgba(26, 26, 26, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.1);
 }
 
 * {
@@ -53,11 +67,11 @@ h1,
 h2,
 h3,
 h4,
-.font-display {
-  font-family: 'Outfit', sans-serif;
+.font-serif {
+  font-family: 'Literata', serif;
 }
 
-/* Glassmorphism utility */
+/* Claude Components */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -68,7 +82,8 @@ h4,
 .glass-card {
   background: var(--bg-secondary);
   border: 1px solid var(--border-primary);
-  border-radius: 16px;
+  border-radius: 4px;
+  /* Cutsharp corners */
   transition: var(--transition-base);
 }
 

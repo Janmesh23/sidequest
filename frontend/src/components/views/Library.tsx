@@ -66,8 +66,8 @@ export default function Library() {
     return (
         <div className={styles.library}>
             <header className={styles.titleSection}>
-                <h1 className={styles.title}>Document Library</h1>
-                <p className={styles.subtitle}>Upload and manage your knowledge base</p>
+                <h1 className={styles.title}>Knowledge Base</h1>
+                <p className={styles.subtitle}>Upload and source control your document context.</p>
             </header>
 
             <div
@@ -81,23 +81,20 @@ export default function Library() {
                     onChange={handleFileChange}
                     accept=".pdf,.txt,.docx"
                 />
-                <div className={`${styles.uploadIcon} ${isUploading ? 'pulse-glow' : ''}`}>
-                    <CloudUpload size={48} />
+                <div className={styles.uploadIcon}>
+                    <CloudUpload size={24} />
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontWeight: 600, fontSize: '18px' }}>
-                        {isUploading ? 'Processing Document...' : 'Click to upload a document'}
-                    </p>
-                    <p style={{ color: 'var(--text-muted)', marginTop: '4px' }}>
-                        Supports PDF, DOCX, and Text files
+                    <p style={{ fontWeight: 500, fontSize: '15px' }}>
+                        {isUploading ? 'Ingesting contextual data...' : 'Click to add document source'}
                     </p>
                 </div>
             </div>
 
             <div className={styles.grid}>
                 {documents.map((doc) => (
-                    <div key={doc.id} className={`${styles.card} glass-card animate-fade-in`}>
-                        <div className={styles.deleteBtn} onClick={() => handleDelete(doc.id)}>
+                    <div key={doc.id} className={`${styles.card} animate-fade-in`}>
+                        <div className={styles.deleteBtn} onClick={() => handleDelete(doc.id)} title="Remove source">
                             <Trash2 size={16} />
                         </div>
 
@@ -110,27 +107,27 @@ export default function Library() {
                         <div>
                             <h3 className={styles.cardTitle}>{doc.filename}</h3>
                             <p className={styles.cardMeta}>
-                                Added {new Date(doc.created_at).toLocaleDateString()}
+                                Indexed on {new Date(doc.created_at).toLocaleDateString()}
                             </p>
                         </div>
 
                         <div className={styles.cardStatus} style={{
-                            color: doc.status === 'ready' ? '#10b981' :
-                                doc.status.includes('failed') ? '#ef4444' : '#f59e0b'
+                            color: doc.status === 'ready' ? 'var(--text-primary)' :
+                                doc.status.includes('failed') ? '#ef4444' : 'var(--text-muted)'
                         }}>
                             {doc.status === 'ready' ? (
                                 <>
-                                    <CheckCircle2 size={16} />
-                                    <span>Ready ({doc.total_chunks} chunks)</span>
+                                    <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981' }} />
+                                    <span>Ready • {doc.total_chunks} index fragments</span>
                                 </>
                             ) : doc.status.includes('failed') ? (
                                 <>
-                                    <AlertCircle size={16} />
-                                    <span>Failed</span>
+                                    <AlertCircle size={14} />
+                                    <span>Ingestion Failed</span>
                                 </>
                             ) : (
                                 <>
-                                    <Clock size={16} className="rotate" />
+                                    <Clock size={14} className="rotate" />
                                     <span>{doc.status}...</span>
                                 </>
                             )}
