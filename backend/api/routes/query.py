@@ -1,10 +1,11 @@
 import logging
 import traceback
-from fastapi import APIRouter, HTTPException, Header, status
+from fastapi import APIRouter, HTTPException, Depends, status
 from pydantic import BaseModel
 from services.retrieval.retriever import retriever
 from services.generation.prompt_builder import prompt_builder
 from services.generation.llm_client import llm_client
+from api.deps import get_current_user, User
 
 # Setup professional logging
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +18,8 @@ class QueryRequest(BaseModel):
     top_k: int = 5
 
 @router.post("/query")
-async def query_document(request: QueryRequest, x_user_id: str = Header(...)):
+async def query_document(request: QueryRequest, current_user: User = Depends(get_current_user)):
+    x_user_id = current_user.id
     """
     Orchestrates the RAG (Retrieval-Augmented Generation) flow:
     1. Retrieve relevant document chunks for the specific user.

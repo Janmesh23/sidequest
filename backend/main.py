@@ -7,7 +7,7 @@ import os
 # Load environment variables (Override system env with .env)
 load_dotenv(override=True)
 
-from api.routes import upload, query, documents
+from api.routes import upload, query, documents, auth
 
 app = FastAPI(
     title="SideQuest API",
@@ -29,6 +29,7 @@ app.add_middleware(
 )
 
 # Include Routers
+app.include_router(auth, tags=["Authentication"])
 app.include_router(upload, tags=["Ingestion"])
 app.include_router(query, tags=["Retrieval"])
 app.include_router(documents, tags=["Management"])

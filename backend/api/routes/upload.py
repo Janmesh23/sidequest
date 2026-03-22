@@ -49,16 +49,18 @@ def process_document_background(doc_id: str, file_path: str, filename: str, user
         if os.path.exists(file_path):
             os.remove(file_path)
 
-from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Header
+from fastapi import APIRouter, UploadFile, File, HTTPException, BackgroundTasks, Depends
+from api.deps import get_current_user, User
 
 @router.post("/upload")
 async def upload_document(
     background_tasks: BackgroundTasks, 
     file: UploadFile = File(...),
-    x_user_id: str = Header(...)
+    current_user: User = Depends(get_current_user)
 ):
     doc_id = str(uuid.uuid4())
     file_path = os.path.join(UPLOAD_DIR, f"{doc_id}_{file.filename}")
+    x_user_id = current_user.id
     
     try:
         # 1. Save file locally immediately

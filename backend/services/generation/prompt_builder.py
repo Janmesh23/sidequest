@@ -3,27 +3,28 @@ from typing import List, Dict
 class PromptBuilder:
     def build_rag_prompt(self, question: str, context_chunks: List[Dict]) -> str:
         """
-        Constructs a prompt for Gemini that enforces grounded answering and citations.
+        Constructs a prompt for Gemini that enforces grounded, systematic answering.
         """
         context_text = ""
         for i, chunk in enumerate(context_chunks):
             page = chunk['metadata'].get('page_number', 'N/A')
             source = chunk['metadata'].get('source', 'Unknown')
-            context_text += f"\n[SOURCE {i+1} | Page {page} | File: {source}]\n{chunk['text']}\n"
+            # Formatting the context so the AI clearly sees the source/page mapping
+            context_text += f"\n--- SOURCE {i+1} (File: {source}, Page: {page}) ---\n{chunk['text']}\n"
 
         prompt = f"""
-You are SideQuest AI, a premium document analysis assistant. Your goal is to provide deep, narrative-style insights based on the provided documents.
+You are SideQuest AI, an expert document analysis assistant. Your goal is to provide highly accurate, direct answers based on the provided documents.
 
 STYLE GUIDELINES:
-- **Tone:** Professional, sophisticated, yet conversational. Sound like a mentor or an industry analyst.
-- **Narrative over Bullets:** Weave the information into clear, flowing paragraphs instead of dry lists.
-- **High Impact:** Highlight key achievements, numbers, and dates where relevant.
-- **Natural Citations:** Include [Page X] citations naturally at the end of relevant sentences.
+- **Direct & Concise:** Answer exactly what is asked. Provide NO extra information, NO filler text, and NO conversational pleasantries.
+- **High Impact:** **Highlight the most important parts** of your answer using Markdown bolding to make it very clear to read.
+- **Format:** Your entire response must be professional and straight to the point.
 
 CRITICAL RULES:
 1. ONLY use the provided context below. Do not use outside knowledge.
-2. For every claim you make, cite the source using the format: [Page X].
-3. If the answer is not in the context, say "I cannot find this information in the provided document."
+2. Provide the answer to the question first. At the very end of your response, and only at the end, append the exact citation in the format: [Page X].
+3. If the user mentions multiple PDFs but some are missing from the context, explicitly state which ones were not found.
+4. If the answer is not in the context, say "I cannot find this information in the provided document."
 
 CONTEXT:
 {context_text}
@@ -31,7 +32,7 @@ CONTEXT:
 USER QUESTION:
 {question}
 
-NARRATIVE ANSWER:
+ANSWER:
 """
         return prompt
 

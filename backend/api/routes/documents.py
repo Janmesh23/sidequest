@@ -6,13 +6,17 @@ from services.retrieval.vector_store import vector_store
 
 router = APIRouter()
 
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, HTTPException, Depends
+from api.deps import get_current_user, User
+
 @router.get("/documents")
-async def list_documents(x_user_id: str = Header(...)):
+async def list_documents(current_user: User = Depends(get_current_user)):
+    x_user_id = current_user.id
     return status_manager.get_all_statuses(user_id=x_user_id)
 
 @router.delete("/documents/{document_id}")
-async def delete_document(document_id: str, x_user_id: str = Header(...)):
+async def delete_document(document_id: str, current_user: User = Depends(get_current_user)):
+    x_user_id = current_user.id
     db = SessionLocal()
     try:
         doc = db.query(Document).filter(Document.id == document_id, Document.user_id == x_user_id).first()

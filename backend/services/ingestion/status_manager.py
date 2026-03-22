@@ -1,6 +1,6 @@
 from typing import Dict, List, Optional
 from .database import SessionLocal, engine, Base
-from .models import Document
+from .models import Document, User
 
 # Create tables on startup
 Base.metadata.create_all(bind=engine)
