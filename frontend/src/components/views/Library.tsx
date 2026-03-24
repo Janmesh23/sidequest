@@ -18,12 +18,12 @@ export default function Library() {
     const [documents, setDocuments] = useState<DocumentStatus[]>([]);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const userId = (session?.user as any)?.id || "user_1";
+    const token = (session?.user as any)?.accessToken || "";
 
     const fetchDocs = async () => {
-        if (!session) return;
+        if (!session || !token) return;
         try {
-            const data = await getDocuments(userId);
+            const data = await getDocuments(token);
             setDocuments(data);
         } catch (err) {
             console.error('Failed to fetch', err);
@@ -34,7 +34,7 @@ export default function Library() {
         fetchDocs();
         const interval = setInterval(fetchDocs, 3000);
         return () => clearInterval(interval);
-    }, [session, userId]);
+    }, [session, token]);
 
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -42,7 +42,7 @@ export default function Library() {
 
         setIsUploading(true);
         try {
-            await uploadDocument(file, userId);
+            await uploadDocument(file, token);
             await fetchDocs();
         } catch (err) {
             alert('Upload failed. Check console for details.');
@@ -56,7 +56,7 @@ export default function Library() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this document?')) return;
         try {
-            await deleteDocument(id, userId);
+            await deleteDocument(id, token);
             await fetchDocs();
         } catch (err) {
             console.error(err);

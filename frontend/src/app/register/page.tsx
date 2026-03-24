@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useState } from 'react';
-import styles from './login.module.css';
+import styles from '../login/login.module.css';
 import { Zap } from 'lucide-react';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import axios from 'axios';
 
-export default function LoginPage() {
-    const [email, setEmail] = useState('test@example.com');
-    const [password, setPassword] = useState('password123');
+export default function RegisterPage() {
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
@@ -18,22 +20,31 @@ export default function LoginPage() {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setSuccess('');
 
         try {
-            const result = await signIn('credentials', {
+            const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
+            
+            // Call the FastAPI /register endpoint
+            await axios.post(`${backendUrl}/register`, {
                 email,
                 password,
-                redirect: false,
+                name
             });
 
-            if (result?.error) {
-                setError('Invalid email or password');
+            setSuccess('Account created successfully! Redirecting to login...');
+            
+            // Redirect to login after 2 seconds
+            setTimeout(() => {
+                router.push('/login');
+            }, 2000);
+            
+        } catch (err: any) {
+            if (err.response && err.response.data && err.response.data.detail) {
+                setError(err.response.data.detail);
             } else {
-                router.push('/');
-                router.refresh();
+                setError('Failed to create account. Please try again.');
             }
-        } catch (err) {
-            setError('An unexpected error occurred');
         } finally {
             setLoading(false);
         }
@@ -50,14 +61,28 @@ export default function LoginPage() {
                         <Zap size={32} />
                     </div>
                     <div style={{ textAlign: 'center' }}>
-                        <h1 className={styles.title}>SideQuest</h1>
-                        <p className={styles.subtitle}>Intelligence for your document context.</p>
+                        <h1 className={styles.title}>Join SideQuest</h1>
+                        <p className={styles.subtitle}>Unlock your automated document intelligence.</p>
                     </div>
                 </div>
 
                 {error && <div className={styles.error}>{error}</div>}
+                {success && <div className={styles.error} style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.2)' }}>{success}</div>}
 
                 <form className={styles.form} onSubmit={handleSubmit}>
+                    <div className={styles.inputGroup}>
+                        <label className={styles.label}>Full Name</label>
+                        <input
+                            type="text"
+                            className={styles.input}
+                            placeholder="Alex Doe"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                            disabled={!!success}
+                        />
+                    </div>
+
                     <div className={styles.inputGroup}>
                         <label className={styles.label}>Email Address</label>
                         <input
@@ -67,6 +92,7 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            disabled={!!success}
                         />
                     </div>
 
@@ -79,21 +105,19 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            disabled={!!success}
+                            minLength={6}
                         />
                     </div>
 
-                    <button type="submit" className={styles.button} disabled={loading}>
-                        {loading ? 'Entering...' : 'Sign In'}
+                    <button type="submit" className={styles.button} disabled={loading || !!success}>
+                        {loading ? 'Creating account...' : 'Create Account'}
                     </button>
                 </form>
 
                 <p className={styles.footer}>
-                    New to SideQuest? <Link href="/register" className={styles.link}>Create an account</Link>
+                    Already have an account? <Link href="/login" className={styles.link}>Sign in instead</Link>
                 </p>
-
-                <div className={styles.tip}>
-                    Tip: Use <code>test@example.com</code> / <code>password123</code>
-                </div>
             </div>
         </div>
     );

@@ -29,7 +29,7 @@ export default function Chat() {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const userId = (session?.user as any)?.id || "user_1";
+    const token = (session?.user as any)?.accessToken || "";
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -38,7 +38,7 @@ export default function Chat() {
     }, [messages, isTyping]);
 
     const handleSend = async () => {
-        if (!inputValue.trim() || isTyping || !session) return;
+        if (!inputValue.trim() || isTyping || !session || !token) return;
 
         const userMessage: Message = {
             id: Date.now().toString(),
@@ -51,7 +51,7 @@ export default function Chat() {
         setIsTyping(true);
 
         try {
-            const response = await queryDocument(userMessage.text, userId);
+            const response = await queryDocument(userMessage.text, token);
 
             const aiMessage: Message = {
                 id: (Date.now() + 1).toString(),
@@ -106,14 +106,6 @@ export default function Chat() {
                             />
                             <div className={styles.inputControls}>
                                 <div className={styles.ctrlGroup}>
-                                    <div className={styles.iconBtn} title="Upload context">
-                                        <PlusCircle size={18} />
-                                    </div>
-                                    <div className={styles.modelSelector}>
-                                        <Zap size={14} />
-                                        <span>SideQuest Sonnet 1.0</span>
-                                        <Quote size={12} style={{ opacity: 0.5 }} />
-                                    </div>
                                 </div>
                                 <button
                                     className={styles.sendBtn}
@@ -125,13 +117,7 @@ export default function Chat() {
                             </div>
                         </div>
 
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>
-                            {['Code', 'Learn', 'Write', 'Analyze'].map(tag => (
-                                <div key={tag} className={styles.modelSelector} style={{ borderRadius: '8px', padding: '6px 12px' }}>
-                                    <span style={{ fontSize: '13px' }}>{tag}</span>
-                                </div>
-                            ))}
-                        </div>
+                        {/* Suggestion tags removed */}
                     </div>
                 </div>
             ) : (
@@ -184,12 +170,6 @@ export default function Chat() {
                             />
                             <div className={styles.inputControls}>
                                 <div className={styles.ctrlGroup}>
-                                    <div className={styles.iconBtn}>
-                                        <PlusCircle size={18} />
-                                    </div>
-                                    <div className={styles.modelSelector}>
-                                        <span>Sonnet v1</span>
-                                    </div>
                                 </div>
                                 <button
                                     className={styles.sendBtn}

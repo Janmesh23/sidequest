@@ -6,7 +6,7 @@ import {
     PlusCircle,
     MessageSquare,
     Library,
-    Settings,
+    LogOut,
     FileText,
     CloudUpload,
     Search,
@@ -25,14 +25,21 @@ interface ShellProps {
 export default function Shell({ children, activeTab, onTabChange }: ShellProps) {
     const { data: session, status } = useSession();
     const [documents, setDocuments] = useState<DocumentStatus[]>([]);
-    const userId = (session?.user as any)?.id;
+    const token = (session?.user as any)?.accessToken;
 
     useEffect(() => {
-        if (status !== 'authenticated' || !userId) return;
+        if (status === 'authenticated' && !token) {
+            // Force logout if they have a stale session cookie missing the new accessToken
+            console.error("Stale session detected: Missing accessToken. Forcing logout.");
+            signOut({ callbackUrl: '/login', redirect: true });
+            return;
+        }
+
+        if (status !== 'authenticated' || !token) return;
 
         const fetchDocs = async () => {
             try {
-                const data = await getDocuments(userId);
+                const data = await getDocuments(token);
                 setDocuments(data);
             } catch (err) {
                 console.error('Failed to fetch documents', err);
@@ -42,7 +49,7 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
         fetchDocs();
         const interval = setInterval(fetchDocs, 5000); // Poll every 5s
         return () => clearInterval(interval);
-    }, [status, userId]);
+    }, [status, token]);
 
     const handleLogout = async () => {
         await signOut({ callbackUrl: '/login', redirect: true });
@@ -88,7 +95,7 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
                         <User size={20} />
                     </div>
                     <div className={styles.navItem} onClick={handleLogout} title="Logout">
-                        <Settings size={20} />
+                        <LogOut size={20} />
                     </div>
                 </div>
             </aside>
@@ -96,10 +103,7 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
             {/* Main Content */}
             <main className={styles.main}>
                 <header className={styles.header}>
-                    <div className={styles.searchBar}>
-                        {/* Search placeholder */}
-                    </div>
-                    <div style={{ display: 'flex', gap: '16px' }}>
+                    <div style={{ display: 'flex', gap: '16px', marginLeft: 'auto' }}>
                         <button style={{
                             padding: '8px 16px',
                             borderRadius: '6px',
