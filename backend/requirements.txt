@@ -15,3 +15,5 @@ google-generativeai
 langchain-text-splitters
 gunicorn
 uvicorn[standard]
+langchain-huggingface
+huggingface_hub
