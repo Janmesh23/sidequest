@@ -1,32 +1,38 @@
 import os
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class LLMClient:
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY")
-        self.model_name = os.getenv("LLM_MODEL", "gemini-1.5-flash")
+        self.api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+        self.model_name = os.getenv("LLM_MODEL", "meta-llama/Llama-3.1-8B-Instruct")
         
-        if not self.api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables")
-            
-        self.client = ChatGoogleGenerativeAI(
-            model=self.model_name,
-            google_api_key=self.api_key,
-            temperature=0,
-            convert_system_message_to_human=True
-        )
+        if not self.api_token:
+            print("WARNING: HUGGINGFACEHUB_API_TOKEN not found in environment variables. HuggingFace Hub may look for it globally.")
+
+        self.llm = HuggingFaceEndpoint(
+            repo_id=self.model_name,
+            task="text-generation",
+            max_new_tokens=512,
+            temperature=0.7,
+            top_p=0.9,
+            top_k=50,
+            repetition_penalty=1.1,
+            do_sample=True,
+            huggingfacehub_api_token=self.api_token,
+        )  
+        self.client = ChatHuggingFace(llm=self.llm)
 
     async def generate_answer(self, prompt: str) -> str:
         """
-        Generates a response from the Gemini model based on the provided prompt.
+        Generates a response from the Hugging Face model based on the provided prompt.
         """
         response = await self.client.ainvoke(prompt)
         content = response.content
         
-        # Handle cases where content is a list of structured chunks (common in newer LangChain/Gemini versions)
+        # Handle cases where content is a list of structured chunks
         if isinstance(content, list):
             text_parts = []
             for part in content:

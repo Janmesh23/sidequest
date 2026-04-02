@@ -1,21 +1,22 @@
 import os
 import time
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from dotenv import load_dotenv
 
 load_dotenv()
 
 class Embedder:
     def __init__(self):
-        self.api_key = os.getenv("GEMINI_API_KEY")
-        self.model_name = os.getenv("EMBEDDING_MODEL", "models/text-embedding-004")
+        self.api_token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
+        # Ensure we use an embedding model string for huggingface
+        self.model_name = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
         
-        if not self.api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables")
+        if not self.api_token:
+            print("WARNING: HUGGINGFACEHUB_API_TOKEN not found in environment variables. HuggingFace Hub may look for it globally.")
             
-        self.embeddings = GoogleGenerativeAIEmbeddings(
+        self.embeddings = HuggingFaceEndpointEmbeddings(
             model=self.model_name,
-            google_api_key=self.api_key
+            huggingfacehub_api_token=self.api_token
         )
 
     def embed_text(self, text: str) -> list[float]:
@@ -28,7 +29,7 @@ class Embedder:
         """
         Generates embeddings for a list of document chunks using batching to avoid rate limits.
         """
-        batch_size = 20  # More conservative batch size for strict free tier quotas
+        batch_size = 20  # Batch size for api limits
         all_embeddings = []
         
         for i in range(0, len(texts), batch_size):
@@ -39,18 +40,14 @@ class Embedder:
                 embeddings = self.embeddings.embed_documents(batch)
                 all_embeddings.extend(embeddings)
             except Exception as e:
-                if "429" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                    print("Rate limit hit! Waiting 30s before retry...")
-                    time.sleep(30)
-                    embeddings = self.embeddings.embed_documents(batch)
-                    all_embeddings.extend(embeddings)
-                else:
-                    raise e
+                print("Rate limit or Error hit! Waiting 10s before retry...", e)
+                time.sleep(10)
+                embeddings = self.embeddings.embed_documents(batch)
+                all_embeddings.extend(embeddings)
             
-            # Use a longer breather to stay well within the RPM limits
             if i + batch_size < len(texts):
-                print("Rate limit breather (6s)...")
-                time.sleep(6)
+                print("Rate limit breather (2s)...")
+                time.sleep(2)
                 
         return all_embeddings
 
