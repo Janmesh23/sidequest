@@ -43,6 +43,11 @@ export const queryDocument = async (question: string, userId: string, topK: numb
     return response.data;
 };
 
+export const generateChatTitle = async (question: string): Promise<string> => {
+    const response = await api.post('/query/title', { question });
+    return response.data.title;
+};
+
 export const deleteDocument = async (id: string, userId: string) => {
     const response = await api.delete(`/documents/${id}`, {
         headers: { 'X-User-ID': userId }

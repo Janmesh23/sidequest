@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   /* Colors - Claude Minimalist (Light Mode Default) */
@@ -58,7 +58,7 @@ body {
   width: 100%;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   overflow: hidden;
   /* We'll use internal scrolling */
 }
@@ -68,7 +68,7 @@ h2,
 h3,
 h4,
 .font-serif {
-  font-family: 'Literata', serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 /* Claude Components */

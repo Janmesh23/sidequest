@@ -11,11 +11,19 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 20px 0;
+    align-items: flex-start;
+    padding: 20px 14px;
     border-right: 1px solid var(--border-primary);
     background-color: var(--bg-primary);
-    /* Claude uses same bg for sidebar area usually or slightly off */
+    transition: width 0.2s ease;
+    overflow-x: hidden;
+    overflow-y: auto;
+    white-space: nowrap;
+    z-index: 50;
+}
+
+.sidebar:hover {
+    width: 260px;
 }
 
 .main {
@@ -39,7 +47,7 @@
 
 .content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden;
     padding: 0;
     display: flex;
     flex-direction: column;
@@ -63,6 +71,20 @@
     align-items: center;
     justify-content: center;
     color: white;
+    flex-shrink: 0;
+}
+
+.logo span {
+    margin-left: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: 'Outfit', sans-serif;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar:hover .logo span {
+    opacity: 1;
 }
 
 .navSection {
@@ -76,19 +98,35 @@
 .navItem {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 44px;
+    justify-content: flex-start;
+    width: 100%;
     height: 44px;
+    padding-left: 12px;
     border-radius: 8px;
     color: var(--text-muted);
     transition: var(--transition-fast);
     cursor: pointer;
     position: relative;
+    flex-shrink: 0;
 }
 
 .navItem span {
-    display: none;
-    /* Hide labels in ultra-thin sidebar */
+    margin-left: 14px;
+    font-size: 15px;
+    font-weight: 500;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.navItem svg {
+    flex-shrink: 0;
+}
+
+.sidebar:hover .navItem span {
+    opacity: 1;
 }
 
 .navItem:hover {
@@ -103,33 +141,65 @@
 }
 
 .docList {
-    margin-top: 32px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    align-items: center;
+    gap: 8px;
+    align-items: flex-start;
+    width: 100%;
 }
 
-.docSectionTitle {
-    display: none;
-    /* Hide title in thin sidebar */
+.sectionHeading {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    padding-left: 12px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.sidebar:hover .sectionHeading {
+    opacity: 1;
 }
 
 .docItem {
     display: flex;
     align-items: center;
-    justify-content: center;
-    width: 40px;
+    justify-content: flex-start;
+    width: 100%;
     height: 40px;
+    padding-left: 14px;
     border-radius: 8px;
     color: var(--text-muted);
     cursor: pointer;
     transition: var(--transition-fast);
+    flex-shrink: 0;
 }
 
 .docItem span {
-    display: none;
-    /* Hide filenames */
+    margin-left: 14px;
+    font-size: 14px;
+    font-weight: 400;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.docItem svg {
+    flex-shrink: 0;
+}
+
+.sidebar:hover .docItem span {
+    opacity: 1;
+}
+
+.activeDoc {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
 }
 
 .docItem:hover {

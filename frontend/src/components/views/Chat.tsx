@@ -16,20 +16,23 @@ import { useSession } from 'next-auth/react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-interface Message {
-    id: string;
-    role: 'user' | 'assistant';
-    text: string;
-    citations?: { source: string; page?: number }[];
+import { ChatSession, Message } from '@/app/page';
+
+interface ChatProps {
+    onOpenLibrary: () => void;
+    session: ChatSession | null;
+    onUpdateMessages: (messages: Message[]) => void;
 }
 
-export default function Chat() {
-    const { data: session } = useSession();
-    const [messages, setMessages] = useState<Message[]>([]);
+export default function Chat({ onOpenLibrary, session, onUpdateMessages }: ChatProps) {
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const userId = (session?.user as any)?.id || "user_1";
+    const { data: sessionAuth } = useSession();
+    const userId = (sessionAuth?.user as any)?.id || "user_1";
+    
+    // We bind local messages reference to the session prop so it updates automatically
+    const messages = session?.messages || [];
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -40,35 +43,41 @@ export default function Chat() {
     const handleSend = async () => {
         if (!inputValue.trim() || isTyping || !session) return;
 
-        const userMessage: Message = {
+        const newMessage: Message = {
             id: Date.now().toString(),
             role: 'user',
             text: inputValue.trim(),
+            timestamp: Date.now()
         };
 
-        setMessages(prev => [...prev, userMessage]);
+        // Create updated list
+        const updatedMessages = [...messages, newMessage];
+        onUpdateMessages(updatedMessages);
         setInputValue('');
+        
         setIsTyping(true);
 
         try {
-            const response = await queryDocument(userMessage.text, userId);
-
+            const response = await queryDocument(newMessage.text, userId);
+            
             const aiMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                role: 'assistant',
                 text: response.answer,
-                citations: response.citations || []
+                role: 'ai',
+                timestamp: Date.now()
             };
-
-            setMessages(prev => [...prev, aiMessage]);
-        } catch (err) {
-            console.error(err);
+            
+            onUpdateMessages([...updatedMessages, aiMessage]);
+        } catch (error) {
+            console.error("Query failed", error);
+            
             const errorMessage: Message = {
                 id: (Date.now() + 1).toString(),
-                role: 'assistant',
-                text: "I'm sorry, I encountered an error while processing your request. Please ensure you have uploaded documents and try again.",
+                text: "Sorry, I ran into an error connecting to the intelligence server. Please try again or check your backend connection.",
+                role: 'ai',
+                timestamp: Date.now()
             };
-            setMessages(prev => [...prev, errorMessage]);
+            onUpdateMessages([...updatedMessages, errorMessage]);
         } finally {
             setIsTyping(false);
         }
@@ -83,60 +92,15 @@ export default function Chat() {
 
     return (
         <div className={styles.chatContainer}>
-            {messages.length === 0 ? (
-                <div className={styles.emptyState}>
-                    <h1 className={styles.greeting}>
-                        {getTimeGreeting()}, {session?.user?.name || 'Friend'}
-                    </h1>
-
-                    <div className={styles.inputArea} style={{ width: '100%', maxWidth: '640px' }}>
-                        <div className={styles.inputWrapper}>
-                            <textarea
-                                className={styles.input}
-                                placeholder="How can I help you today?"
-                                rows={1}
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSend();
-                                    }
-                                }}
-                            />
-                            <div className={styles.inputControls}>
-                                <div className={styles.ctrlGroup}>
-                                    <div className={styles.iconBtn} title="Upload context">
-                                        <PlusCircle size={18} />
-                                    </div>
-                                    <div className={styles.modelSelector}>
-                                        <Zap size={14} />
-                                        <span>SideQuest Sonnet 1.0</span>
-                                        <Quote size={12} style={{ opacity: 0.5 }} />
-                                    </div>
-                                </div>
-                                <button
-                                    className={styles.sendBtn}
-                                    onClick={handleSend}
-                                    disabled={!inputValue.trim() || isTyping}
-                                >
-                                    <Send size={16} />
-                                </button>
-                            </div>
-                        </div>
-
-                        <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '20px' }}>
-                            {['Code', 'Learn', 'Write', 'Analyze'].map(tag => (
-                                <div key={tag} className={styles.modelSelector} style={{ borderRadius: '8px', padding: '6px 12px' }}>
-                                    <span style={{ fontSize: '13px' }}>{tag}</span>
-                                </div>
-                            ))}
-                        </div>
+            <div className={styles.messages} ref={scrollRef}>
+                {messages.length === 0 ? (
+                    <div className={styles.emptyState}>
+                        <h1 className={styles.greeting}>
+                            {getTimeGreeting()}, {sessionAuth?.user?.name || 'Friend'}
+                        </h1>
                     </div>
-                </div>
-            ) : (
-                <>
-                    <div className={styles.messages} ref={scrollRef}>
+                ) : (
+                    <div className={styles.messageThread}>
                         {messages.map((msg) => (
                             <div key={msg.id} className={styles.message}>
                                 <div className={styles.avatar}>
@@ -166,43 +130,40 @@ export default function Chat() {
                             </div>
                         )}
                     </div>
+                )}
+            </div>
 
-                    <div className={styles.inputArea} style={{ paddingBottom: '32px' }}>
-                        <div className={styles.inputWrapper}>
-                            <textarea
-                                className={styles.input}
-                                placeholder="Reply to SideQuest..."
-                                rows={1}
-                                value={inputValue}
-                                onChange={(e) => setInputValue(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && !e.shiftKey) {
-                                        e.preventDefault();
-                                        handleSend();
-                                    }
-                                }}
-                            />
-                            <div className={styles.inputControls}>
-                                <div className={styles.ctrlGroup}>
-                                    <div className={styles.iconBtn}>
-                                        <PlusCircle size={18} />
-                                    </div>
-                                    <div className={styles.modelSelector}>
-                                        <span>Sonnet v1</span>
-                                    </div>
-                                </div>
-                                <button
-                                    className={styles.sendBtn}
-                                    onClick={handleSend}
-                                    disabled={!inputValue.trim() || isTyping}
-                                >
-                                    <Send size={16} />
-                                </button>
+            <div className={styles.inputArea} style={{ paddingBottom: '32px' }}>
+                <div className={styles.inputWrapper}>
+                    <textarea
+                        className={styles.input}
+                        placeholder="Reply to SideQuest..."
+                        rows={1}
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSend();
+                            }
+                        }}
+                    />
+                    <div className={styles.inputControls}>
+                        <div className={styles.ctrlGroup}>
+                            <div className={styles.iconBtn} title="Upload context" onClick={onOpenLibrary} style={{ cursor: 'pointer' }}>
+                                <PlusCircle size={18} />
                             </div>
                         </div>
+                        <button
+                            className={styles.sendBtn}
+                            onClick={handleSend}
+                            disabled={!inputValue.trim() || isTyping}
+                        >
+                            <Send size={16} />
+                        </button>
                     </div>
-                </>
-            )}
+                </div>
+            </div>
         </div>
     );
 }

@@ -16,13 +16,27 @@ import {
 import { getDocuments, DocumentStatus } from '@/utils/api';
 import { signOut, useSession } from 'next-auth/react';
 
+import { ChatSession } from '@/app/page';
+
 interface ShellProps {
     children: React.ReactNode;
     activeTab: 'chat' | 'library';
     onTabChange: (tab: 'chat' | 'library') => void;
+    sessions?: ChatSession[];
+    activeSessionId?: string | null;
+    onSelectSession?: (id: string) => void;
+    onNewChat?: () => void;
 }
 
-export default function Shell({ children, activeTab, onTabChange }: ShellProps) {
+export default function Shell({ 
+    children, 
+    activeTab, 
+    onTabChange,
+    sessions,
+    activeSessionId,
+    onSelectSession,
+    onNewChat
+}: ShellProps) {
     const { data: session, status } = useSession();
     const [documents, setDocuments] = useState<DocumentStatus[]>([]);
     const userId = (session?.user as any)?.id;
@@ -56,15 +70,23 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
                     <div className={styles.logoIcon}>
                         <Zap size={18} />
                     </div>
+                    <span>SideQuest</span>
                 </div>
 
                 <nav className={styles.navSection}>
+                    {onNewChat && (
+                        <div className={styles.navItem} onClick={onNewChat} title="New Chat">
+                            <PlusCircle size={20} />
+                            <span>New Chat</span>
+                        </div>
+                    )}
                     <div
                         className={`${styles.navItem} ${activeTab === 'chat' ? styles.navItemActive : ''}`}
                         onClick={() => onTabChange('chat')}
-                        title="Chat"
+                        title="Chat Workspace"
                     >
                         <MessageSquare size={20} />
+                        <span>Chat Workspace</span>
                     </div>
                     <div
                         className={`${styles.navItem} ${activeTab === 'library' ? styles.navItemActive : ''}`}
@@ -72,23 +94,30 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
                         title="Library"
                     >
                         <Library size={20} />
+                        <span>Library</span>
                     </div>
                 </nav>
 
-                <div className={styles.docList}>
-                    {documents.slice(0, 5).map((doc) => (
-                        <div key={doc.id} className={styles.docItem} title={doc.filename}>
-                            <FileText size={18} />
-                        </div>
-                    ))}
-                </div>
+                {sessions && sessions.length > 0 && (
+                    <div className={styles.docList} style={{ marginTop: '24px' }}>
+                        <div className={styles.sectionHeading}>Recent</div>
+                        {sessions.map(s => (
+                            <div 
+                                key={s.id} 
+                                className={`${styles.docItem} ${s.id === activeSessionId ? styles.activeDoc : ''}`}
+                                onClick={() => onSelectSession && onSelectSession(s.id)}
+                            >
+                                <MessageSquare size={16} />
+                                <span>{s.title}</span>
+                            </div>
+                        ))}
+                    </div>
+                )}
 
                 <div className={styles.navSection} style={{ marginTop: 'auto' }}>
-                    <div className={styles.navItem} title={session?.user?.name || "User"}>
-                        <User size={20} />
-                    </div>
                     <div className={styles.navItem} onClick={handleLogout} title="Logout">
                         <Settings size={20} />
+                        <span>Settings</span>
                     </div>
                 </div>
             </aside>
@@ -100,22 +129,7 @@ export default function Shell({ children, activeTab, onTabChange }: ShellProps) 
                         {/* Search placeholder */}
                     </div>
                     <div style={{ display: 'flex', gap: '16px' }}>
-                        <button style={{
-                            padding: '8px 16px',
-                            borderRadius: '6px',
-                            fontSize: '13px',
-                            fontWeight: 500,
-                            backgroundColor: 'var(--bg-tertiary)',
-                            color: 'var(--text-primary)',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            border: '1px solid var(--border-primary)'
-                        }} onClick={() => onTabChange('library')}>
-                            <CloudUpload size={14} />
-                            Add Context
-                        </button>
+                        {/* Moved 'Add Context' to Chat input bar (+) icon */}
                     </div>
                 </header>
 

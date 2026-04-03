@@ -16,6 +16,24 @@ class QueryRequest(BaseModel):
     question: str
     top_k: int = 5
 
+class TitleRequest(BaseModel):
+    question: str
+
+@router.post("/query/title")
+async def generate_title(request: TitleRequest):
+    """Generates a highly concise title using the LLM"""
+    try:
+        prompt = f"System: Generate a very short, concise title (maximum 3 to 4 words) summarizing the following query. Do not use quotes, punctuation, or any introductory filler text.\n\nQuery: {request.question}\n\nTitle:"
+        answer = await llm_client.generate_answer(prompt)
+        # Clean up common AI artifacts
+        cleaned_title = answer.replace('"', '').replace("'", '').replace('Title:', '').strip().capitalize()
+        if len(cleaned_title) > 40:
+            cleaned_title = cleaned_title[:40] + "..."
+        return {"title": cleaned_title}
+    except Exception as e:
+        logger.error(f"Title generation failed: {e}")
+        return {"title": "New Chat"}
+
 @router.post("/query")
 async def query_document(request: QueryRequest, x_user_id: str = Header(...)):
     """

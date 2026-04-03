@@ -36,11 +36,11 @@
 }
 
 .title {
-    font-family: 'Literata', serif;
-    font-size: 32px;
-    font-weight: 500;
+    font-size: 42px;
+    font-weight: 600;
     color: var(--text-primary);
     margin-bottom: 8px;
+    font-family: 'Outfit', sans-serif;
 }
 
 .subtitle {
@@ -87,19 +87,20 @@
 .button {
     width: 100%;
     padding: 14px;
-    background-color: var(--accent-primary);
-    color: var(--bg-primary);
+    background-color: #ffffff;
+    color: #000000;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition-fast);
+    transition: transform 0.2s ease, opacity 0.2s ease;
     margin-top: 8px;
 }
 
 .button:hover:not(:disabled) {
-    opacity: 0.9;
+    transform: translateY(-1px);
+    opacity: 0.95;
 }
 
 .footer {
